@@ -65,6 +65,7 @@ class MetaTitleTemplate extends DataObject
         if (!$titleTemplate) {
             $titleTemplate = self::get_default_title();
         }
+        $title = Variable::process_varialbes($title);
         return Variable::process_varialbes($titleTemplate, [
             'MetaTitle' => $title
         ]);

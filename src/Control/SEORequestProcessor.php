@@ -32,7 +32,7 @@ class SEORequestProcessor implements HTTPMiddleware {
 		$config = SiteConfig::current_site_config();
 
 		// head scripts
-		if($config->HeadScripts && strpos($body, '</head>') !== false) {
+		if($config->HeadScripts && str_contains((string) $body, '</head>')) {
 			$head = strpos($body, '</head>');
 			$before = substr($body, 0, $head);
 			$after = substr($body, $head + strlen('</head>'));
@@ -40,7 +40,7 @@ class SEORequestProcessor implements HTTPMiddleware {
 		}
 
 		// end of body
-		if($config->BodyStartScripts && strpos($body, '<body') !== false) {
+		if($config->BodyStartScripts && str_contains((string) $body, '<body')) {
 		    preg_match("/<body(.)*>/", $body, $matches);
 		    if (!$matches) {
                 preg_match("/<body[\s\S]+?>/", $body, $matches);
@@ -55,7 +55,7 @@ class SEORequestProcessor implements HTTPMiddleware {
 		}
 
 		// end of body
-        if (strpos($body, '</body>') !== false) {
+        if (str_contains((string) $body, '</body>')) {
             /* @var $record SEODataExtension */
             $help = false;
             if (($request->requestVar('structureddata_help') == 1) && ($record = SEODataExtension::get_seo_record())) {

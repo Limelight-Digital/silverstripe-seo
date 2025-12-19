@@ -26,13 +26,13 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\i18n\i18n;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Security\Permission;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\HTML;
@@ -50,7 +50,7 @@ use Spatie\SchemaOrg\BaseType;
  * @property DataObject $owner
  * @method MetaTitleTemplate MetaTitleTemplate
  */
-class SEODataExtension extends DataExtension
+class SEODataExtension extends Extension
 {
 
     use Configurable;
@@ -820,6 +820,59 @@ $owner:
 HTML;
 
             return $html;
+        }
+    }
+
+    /**
+     * Hook into SS6 core MetaComponents to add SEO tags
+     */
+    public function updateMetaComponents(&$tags)
+    {
+        $seoTags = $this->MetaTagCollection(true); // Get raw values (already processed)
+        
+        // Remove core title first to ensure we override it
+        unset($tags['title']);
+        unset($tags['generator']);
+        unset($tags['description']);
+        
+        // Convert our SEO tags to the MetaComponents format
+        foreach ($seoTags as $key => $value) {
+            if ($key === 'title') {
+                $tags[$key] = [
+                    'tag' => 'title',
+                    'content' => $value
+                ];
+            } elseif ($key === 'canonical') {
+                $tags[$key] = [
+                    'tag' => 'link',
+                    'attributes' => [
+                        'rel' => 'canonical',
+                        'href' => $value
+                    ]
+                ];
+            } elseif (strpos($key, 'og:') === 0) {
+                $tags[$key] = [
+                    'attributes' => [
+                        'property' => $key,
+                        'content' => $value
+                    ]
+                ];
+            } elseif (strpos($key, 'twitter:') === 0) {
+                $tags[$key] = [
+                    'attributes' => [
+                        'name' => $key,
+                        'content' => $value
+                    ]
+                ];
+            } else {
+                // Default meta tag
+                $tags[$key] = [
+                    'attributes' => [
+                        'name' => $key,
+                        'content' => $value
+                    ]
+                ];
+            }
         }
     }
 }

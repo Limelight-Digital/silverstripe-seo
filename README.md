@@ -17,15 +17,15 @@ nivanka@silverstripers.com
 
 ## Installation
 
-Use composer to install on your SilverStripe 4 website.
+Use composer to install on your SilverStripe 6 website.
 
 ```
-composer require silverstripers/seo dev-master
+composer require silverstripers/seo
 ```
 
 ## Requirements
 
-1. SilverStripe 4+
+1. SilverStripe 6.1+
 2. SilverStripe Reports
 3. SilverStripe Assets
 
@@ -34,10 +34,13 @@ composer require silverstripers/seo dev-master
 Require the package via composer and run dev build. http://mysite.com/dev/build?flush=all
 The module will create additional SEO fields for the SiteTree (page) objects and will add in an interface for set up the SEO data.
 
-Add the following instead of the SilverStripe's default meta tag in the `<head>` section of your template.
+The module hooks into SilverStripe's core `$MetaTags` rendering. Make sure your Page.ss template includes `$MetaTags` in the `<head>` section, and use `$ComputeMetaTitle` for the `<title>` tag:
 
-```
-$GenerateMetaTags.RAW
+```html
+<head>
+    <title>$ComputeMetaTitle</title>
+    $MetaTags(false)
+</head>
 ```
 
 ## DataObjects as pages
