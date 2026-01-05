@@ -476,7 +476,7 @@ class SEODataExtension extends Extension
 				$items = self::get_duplicates_list($duplicates);
 				$result->addFieldError('FocusKeyword', sprintf(_t(__CLASS__.'.FocusKeywordIsNotUnique',
 					'This keyword is not unique. It is also used by \'%s\''), $items),
-					ValidationResult::TYPE_ERROR, null, ValidationResult::CAST_HTML);
+					ValidationResult::TYPE_ERROR, '', ValidationResult::CAST_HTML);
 			}
 			if ($result->isValid()) {
 				$result->addFieldMessage('FocusKeyword', _t(__CLASS__.'.FocusKeywordPassed',
@@ -525,7 +525,7 @@ class SEODataExtension extends Extension
 				$result->addFieldError('MetaTitle',
 					sprintf(_t(__CLASS__.'.MetaTitleDuplicated',
 						'This title is not unique. It is also used by %s'), $items),
-					ValidationResult::TYPE_ERROR, null, ValidationResult::CAST_HTML);
+					ValidationResult::TYPE_ERROR, '', ValidationResult::CAST_HTML);
 			} else {
 				$result->addFieldMessage('MetaTitle',
 					_t(__CLASS__.'.MetaTitleUnique',
@@ -574,7 +574,7 @@ class SEODataExtension extends Extension
 				$items = self::get_duplicates_list($duplicates);
 				$result->addFieldError('MetaDescription',
 					sprintf(_t(__CLASS__.'.MetaDescriptionGoodLength', 'This description is not unique. It is also used by %s'), $items),
-					ValidationResult::TYPE_ERROR, null, ValidationResult::CAST_HTML);
+					ValidationResult::TYPE_ERROR, '', ValidationResult::CAST_HTML);
 			} else {
 				$result->addFieldMessage('MetaDescription',
 					_t(__CLASS__.'.MetaDescriptionUnique', 'This description is unique to this page'),
