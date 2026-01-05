@@ -14,6 +14,7 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FormField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectInterface;
@@ -229,6 +230,81 @@ class SEOEditor extends FormField
 			}
 		}
 		return json_encode($result);
+	}
+
+	/**
+	 * Perform readonly transformation for viewing archived/historical versions
+	 * 
+	 * @return LiteralField
+	 */
+	public function performReadonlyTransformation()
+	{
+		if (!$this->record) {
+			return LiteralField::create($this->name, '<p>No SEO data available</p>');
+		}
+
+		$seoData = $this->record->SEOData();
+		$html = '<div class="seo-readonly-view" style="padding: 30px;">';
+		$html .= '<h4>SEO Data</h4>';
+		$html .= '<table class="table">';
+		
+		if (!empty($seoData['FocusKeyword'])) {
+			$html .= '<tr><th>Focus Keyword:</th><td>' . Convert::raw2xml($seoData['FocusKeyword']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['MetaTitle'])) {
+			$metaTitle = MetaTitleTemplate::parse_meta_title($this->record, $seoData['MetaTitle']);
+			$html .= '<tr><th>Meta Title:</th><td>' . Convert::raw2xml($metaTitle) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['MetaDescription'])) {
+			$html .= '<tr><th>Meta Description:</th><td>' . Convert::raw2xml($seoData['MetaDescription']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['MetaKeywords'])) {
+			$html .= '<tr><th>Meta Keywords:</th><td>' . Convert::raw2xml($seoData['MetaKeywords']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['FacebookTitle'])) {
+			$html .= '<tr><th>Facebook Title:</th><td>' . Convert::raw2xml($seoData['FacebookTitle']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['FacebookDescription'])) {
+			$html .= '<tr><th>Facebook Description:</th><td>' . Convert::raw2xml($seoData['FacebookDescription']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['FacebookImageURL'])) {
+			$html .= '<tr><th>Facebook Image:</th><td><img src="' . Convert::raw2att($seoData['FacebookImageURL']) . '" style="max-width: 200px;" /></td></tr>';
+		}
+		
+		if (!empty($seoData['TwitterTitle'])) {
+			$html .= '<tr><th>Twitter Title:</th><td>' . Convert::raw2xml($seoData['TwitterTitle']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['TwitterDescription'])) {
+			$html .= '<tr><th>Twitter Description:</th><td>' . Convert::raw2xml($seoData['TwitterDescription']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['TwitterImageURL'])) {
+			$html .= '<tr><th>Twitter Image:</th><td><img src="' . Convert::raw2att($seoData['TwitterImageURL']) . '" style="max-width: 200px;" /></td></tr>';
+		}
+		
+		if (!empty($seoData['MetaRobotsIndex'])) {
+			$html .= '<tr><th>Meta Robots Index:</th><td>' . Convert::raw2xml($seoData['MetaRobotsIndex']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['MetaRobotsFollow'])) {
+			$html .= '<tr><th>Meta Robots Follow:</th><td>' . Convert::raw2xml($seoData['MetaRobotsFollow']) . '</td></tr>';
+		}
+		
+		if (!empty($seoData['CanonicalURL'])) {
+			$html .= '<tr><th>Canonical URL:</th><td>' . Convert::raw2xml($seoData['CanonicalURL']) . '</td></tr>';
+		}
+		
+		$html .= '</table>';
+		$html .= '</div>';
+		
+		return LiteralField::create($this->name, $html);
 	}
 
 
